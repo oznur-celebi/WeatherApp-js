@@ -20,12 +20,29 @@ const getWeatherDataFromApi =async()=>{
     let weatherType ="metric";
     const url =`https://api.openweathermap.org/data/2.5/weather?q=${input.value}&appid=${apikey}&units=${weatherType}`
     
-    
-    try {
+   
+
+ try {
     const response = await axios.get(url);
     console.log(response);
     const {main,name,sys,weather} =response.data;
     console.log(weather[0].icon);
+
+
+    const cityListItems =list.querySelectorAll(".city");
+    const cityListItemArray =Array.from(cityListItems);
+    console.log(cityListItemArray)
+
+    if(cityListItemArray.length> 0){
+         const filteredArray =cityListItemArray.filter(card =>card.querySelector(".city-name span")
+         .innerText == name);
+        if(filteredArray.length >0){
+            msg.innerText =`You already know the weather for ${filteredArray[0].querySelector(".city-name span").innerText},
+            Please search for another city :)) `;
+            form.reset();
+            return;
+        }
+    } 
 
     const iconUrl =`https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/${weather[0].icon}.svg`
     console.log(iconUrl);
@@ -47,10 +64,9 @@ const getWeatherDataFromApi =async()=>{
     list.appendChild(createdCityCardLi);
 
     msg.innerHTML="";
+    // form.reset() ==> input.value ="";
     form.reset();
     input.focus();
-} catch (error) {
-     msg.innerText = error;
-
-}
+  } catch (error) {
+     msg.innerText = error;}
 }
